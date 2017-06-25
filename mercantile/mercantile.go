@@ -97,3 +97,20 @@ func Tiles(west, south, east, north float64, zooms []int64) []TileID {
 	}
 	return tiles
 }
+
+// Xy returns the Spherical Mercator (x, y) in meters
+func Xy(lngLat LngLat) (x, y float64) {
+	lng := lngLat.Lng * (math.Pi / 180.0)
+	lat := lngLat.Lat * (math.Pi / 180.0)
+	x = 6378137.0 * lng
+	y = 6378137.0 * math.Log(math.Tan((math.Pi*0.25)+(0.5*lat)))
+	return x, y
+}
+
+// XyBounds returns the Spherical Mercator bounding box of a tile
+func XyBounds(tile TileID) Bbox {
+	left, top := Xy(Ul(tile))
+	nextTile := TileID{tile.X + 1, tile.Y + 1, tile.Z}
+	right, bottom := Xy(Ul(nextTile))
+	return Bbox{left, bottom, right, top}
+}
