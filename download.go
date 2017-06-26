@@ -1,17 +1,31 @@
 package main
 
-import "fmt"
-import "wms-tiles-downloader/mercantile"
+import (
+	"runtime"
+	"sync"
+	"wms-tiles-downloader/mercantile"
+	"wms-tiles-downloader/tiles"
+)
 
 func main() {
-	//tile := mercantile.Tile(20.499903, 52.017401, 11)
-	//lnglat := mercantile.Ul(tile)
-	tiles := mercantile.Tiles(20.499903, 52.017401, 20.742137, 52.168715, []int64{9, 10, 11, 12, 13, 14, 15, 16, 17})
-	fmt.Println(len(tiles))
-	//fmt.Println(tile)
-	//fmt.Println(lnglat)
-	//fmt.Println(tiles)
-	lnglat := mercantile.LngLat{20.499903, 52.017401}
-	x, y := mercantile.Xy(lnglat)
-	fmt.Println(x, y)
+	tilesToDownload := make(chan mercantile.TileID)
+	tilesXYZ := mercantile.Tiles(20.499903, 52.017401, 20.742137, 52.168715, []int64{11})
+
+	// Spawn current machine CPU count worker goroutines
+	var wg sync.WaitGroup
+	for i := 0; i <= runtime.NumCPU(); i++ {
+		wg.Add(1)
+		go func() {
+			for tile := range tilesToDownload {
+				tiles.GetTile(tile)
+			}
+			wg.Done()
+		}()
+	}
+	for _, tile := range tilesXYZ {
+		tilesToDownload <- tile
+	}
+	close(tilesToDownload)
+
+	wg.Wait()
 }
