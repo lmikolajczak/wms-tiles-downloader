@@ -2,6 +2,7 @@ package opt
 
 import (
 	"flag"
+	"os"
 	"strconv"
 	"strings"
 	"wms-tiles-downloader/mercantile"
@@ -26,6 +27,7 @@ func Parse() ([]string, []int64, mercantile.Bbox) {
 	flag.Parse()
 	if *bboxArea == "" || *url == "" || *layers == "" {
 		flag.PrintDefaults()
+		os.Exit(1)
 	}
 	// Convert parsed flags
 	zooms := convertZooms(zoomLvls)
