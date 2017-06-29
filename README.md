@@ -23,3 +23,9 @@ To see help:
 ```bash
 $ ./wms-tiles-downloader -h
 ```
+
+### Release history
+
+Current binaries for different platforms can be found here:
+
+[v1.0.0](https://github.com/Luqqk/wms-tiles-downloader/releases/tag/v1.0.0)
