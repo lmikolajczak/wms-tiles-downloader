@@ -6,6 +6,22 @@ import (
 	"strings"
 )
 
+// Options struct stores all available flags
+// and their values set by user.
+type Options struct {
+	URL     string
+	Layer   string
+	Format  string
+	Service string
+	Version string
+	Width   string
+	Height  string
+	Srs     string
+	Styles  string
+	Zooms   Zooms
+	Bbox    Bbox
+}
+
 // Zooms stores zoom levels, for which
 // tiles should be downloaded.
 type Zooms []int
