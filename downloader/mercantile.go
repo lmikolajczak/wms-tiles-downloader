@@ -1,4 +1,4 @@
-// Code below, implemets some functions from
+// Code below, implements some functions from
 // Python's https://github.com/mapbox/mercantile package.
 
 package downloader
