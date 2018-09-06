@@ -62,4 +62,14 @@ func main() {
 	if err := options.ValidateOptions(); err != nil {
 		log.Fatal(err)
 	}
+	// Calculate tiles that needs
+	// to be downloaded.
+	tiles := downloader.Tiles(
+		options.Bbox.Left,
+		options.Bbox.Bottom,
+		options.Bbox.Right,
+		options.Bbox.Top,
+		options.Zooms,
+	)
+	fmt.Println(len(tiles))
 }

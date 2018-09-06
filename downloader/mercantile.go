@@ -10,22 +10,22 @@ import (
 // TileID represents id of the tile
 // in (x, y, z) format.
 type TileID struct {
-	X int64
-	Y int64
-	Z int64
+	X int
+	Y int
+	Z int
 }
 
 // Tile get the tile containing a longitude and latitude.
-func Tile(lng float64, lat float64, zoom int64) TileID {
+func Tile(lng float64, lat float64, zoom int) TileID {
 	lat = lat * (math.Pi / 180.0)
 	n := math.Pow(2.0, float64(zoom))
-	tileX := int64(math.Floor((lng + 180.0) / 360.0 * n))
-	tileY := int64(math.Floor((1.0 - math.Log(math.Tan(lat)+(1.0/math.Cos(lat)))/math.Pi) / 2.0 * n))
+	tileX := int(math.Floor((lng + 180.0) / 360.0 * n))
+	tileY := int(math.Floor((1.0 - math.Log(math.Tan(lat)+(1.0/math.Cos(lat)))/math.Pi) / 2.0 * n))
 	return TileID{tileX, tileY, zoom}
 }
 
 // Tiles get the tiles intersecting a geographic bounding box.
-func Tiles(west, south, east, north float64, zooms []int64) []TileID {
+func Tiles(west, south, east, north float64, zooms []int) []TileID {
 	bboxes := [][]float64{}
 	if west > east {
 		bboxWest := []float64{-180.0, south, east, north}
@@ -47,8 +47,8 @@ func Tiles(west, south, east, north float64, zooms []int64) []TileID {
 			ll := Tile(w, s, z)
 			ur := Tile(e, n, z)
 
-			var llx int64
-			var ury int64
+			var llx int
+			var ury int
 
 			if ll.X < 0 {
 				llx = 0
@@ -61,8 +61,8 @@ func Tiles(west, south, east, north float64, zooms []int64) []TileID {
 				ury = ur.Y
 			}
 
-			for i := llx; i < int64(math.Min(float64(ur.X)+1.0, math.Pow(2.0, float64(z)))); i++ {
-				for j := ury; j < int64(math.Min(float64(ll.Y)+1.0, math.Pow(2.0, float64(z)))); j++ {
+			for i := llx; i < int(math.Min(float64(ur.X)+1.0, math.Pow(2.0, float64(z)))); i++ {
+				for j := ury; j < int(math.Min(float64(ll.Y)+1.0, math.Pow(2.0, float64(z)))); j++ {
 					tiles = append(tiles, TileID{i, j, z})
 				}
 			}
