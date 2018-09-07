@@ -1,4 +1,4 @@
-package downloader
+package tiles
 
 import (
 	"net/http"

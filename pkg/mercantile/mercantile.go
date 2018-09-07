@@ -1,7 +1,7 @@
 // Code below, implements some functions from
 // Python's https://github.com/mapbox/mercantile package.
 
-package downloader
+package mercantile
 
 import (
 	"math"

@@ -6,7 +6,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/Luqqk/wms-tiles-downloader/downloader"
+	"github.com/Luqqk/wms-tiles-downloader/pkg/mercantile"
+	"github.com/Luqqk/wms-tiles-downloader/pkg/tiles"
 )
 
 var usageText = `Usage:
@@ -33,21 +34,21 @@ Help Options:
     --help    Help. Prints usage in the stdout.
 `
 
-var options = downloader.Options{}
+var options = tiles.Options{}
 
 // Tie command-line flags to the variables and
 // set default variables and usage messages.
 func init() {
-	flag.StringVar(&options.URL, "url", "", "WMS server URL.")
-	flag.StringVar(&options.Layer, "layer", "", "Layer name.")
-	flag.StringVar(&options.Format, "format", "image/png", "Tiles format.")
-	flag.StringVar(&options.Service, "service", "WMS", "Service type.")
-	flag.StringVar(&options.Version, "version", "1.1.1", "WMS version.")
-	flag.StringVar(&options.Width, "width", "256", "Tile width.")
-	flag.StringVar(&options.Height, "height", "256", "Tile height.")
-	flag.StringVar(&options.Styles, "styles", "", "WMS styles.")
-	flag.Var(&options.Zooms, "zooms", "Comma-separated list of zooms to download.")
-	flag.Var(&options.Bbox, "bbox", "Comma-separated list of bbox coordinates.")
+	flag.StringVar(&options.URL, "url", "", "")
+	flag.StringVar(&options.Layer, "layer", "", "")
+	flag.StringVar(&options.Format, "format", "image/png", "")
+	flag.StringVar(&options.Service, "service", "WMS", "")
+	flag.StringVar(&options.Version, "version", "1.1.1", "")
+	flag.StringVar(&options.Width, "width", "256", "")
+	flag.StringVar(&options.Height, "height", "256", "")
+	flag.StringVar(&options.Styles, "styles", "", "")
+	flag.Var(&options.Zooms, "zooms", "")
+	flag.Var(&options.Bbox, "bbox", "")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stdout, usageText)
 	}
@@ -62,14 +63,14 @@ func main() {
 	if err := options.ValidateOptions(); err != nil {
 		log.Fatal(err)
 	}
-	// Calculate tiles that needs
-	// to be downloaded.
-	tiles := downloader.Tiles(
+	// Calculate tiles IDs (in X/Y/Z format)
+	// that needs to be downloaded.
+	tilesIds := mercantile.Tiles(
 		options.Bbox.Left,
 		options.Bbox.Bottom,
 		options.Bbox.Right,
 		options.Bbox.Top,
 		options.Zooms,
 	)
-	fmt.Println(len(tiles))
+	fmt.Println(len(tilesIds))
 }
