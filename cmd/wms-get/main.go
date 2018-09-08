@@ -72,5 +72,30 @@ func main() {
 		options.Bbox.Top,
 		options.Zooms,
 	)
-	fmt.Println(len(tilesIds))
+	// Process the jobs using semaphore
+	// to limit concurrency. We don't want
+	// to flood WMS servers with too many
+	// requests at the same time.
+	sem := make(chan bool, 16)
+	// As we loop over the tilesIds,
+	// attempt to put a bool onto the sem channel.
+	// If it isn't full, we fire off the goroutine on the tile,
+	// which defers a read from the semaphore which frees its slot.
+	for _, tile := range tilesIds {
+		sem <- true
+		go func(tile mercantile.TileID) {
+			defer func() { <-sem }()
+			// Get the tile
+		}(tile)
+	}
+	// After the last goroutine is fired, there are still
+	// concurrency amount of goroutines running. In order
+	// to make sure we wait for all of them to finish, we
+	// attempt to fill the semaphore back up to its capacity.
+	// Once that succeeds, we know that the last goroutine
+	// has read from the semaphore and all tiles have
+	// been processed.
+	for i := 0; i < cap(sem); i++ {
+		sem <- true
+	}
 }
