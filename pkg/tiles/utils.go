@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Luqqk/wms-tiles-downloader/pkg/mercantile"
 )
 
 // Options struct stores all available flags
@@ -138,6 +140,18 @@ var client = &http.Client{
 
 // Get sends http.Get request to WMS Server
 // and returns response content.
-func Get() {
-	// To do
+func Get(tile mercantile.TileID, options Options) ([]byte, error) {
+	url, _ := url.Parse(options.BaseURL)
+	q := url.Query()
+	q.Set("BBOX", formatTileBbox(tile))
+	url.RawQuery = q.Encode()
+	fmt.Println(url.String())
+	return nil, nil
+}
+
+// formatTileBbox converts tile (x, y, z) to bbox string (l,b,r,t)
+func formatTileBbox(tile mercantile.TileID) string {
+	bbox := mercantile.XyBounds(tile)
+	formattedBbox := fmt.Sprintf("%.9f,%.9f,%.9f,%.9f", bbox.Left, bbox.Bottom, bbox.Right, bbox.Top)
+	return formattedBbox
 }
