@@ -3,6 +3,7 @@ package tiles
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -141,16 +142,31 @@ var client = &http.Client{
 // Get sends http.Get request to WMS Server
 // and returns response content.
 func Get(tile mercantile.TileID, options Options) ([]byte, error) {
-	url, _ := url.Parse(options.BaseURL)
+	// Parse base url and format it
+	// with the bbox of the tile.
+	url, err := url.Parse(options.BaseURL)
+	if err != nil {
+		return nil, err
+	}
 	q := url.Query()
-	q.Set("BBOX", formatTileBbox(tile))
+	q.Set("BBOX", FormatTileBbox(tile))
 	url.RawQuery = q.Encode()
-	fmt.Println(url.String())
-	return nil, nil
+	// Request tile using defined client,
+	// read response body and return it.
+	resp, err := client.Get(url.String())
+	if err != nil {
+		return nil, err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	resp.Body.Close()
+	return body, nil
 }
 
-// formatTileBbox converts tile (x, y, z) to bbox string (l,b,r,t)
-func formatTileBbox(tile mercantile.TileID) string {
+// FormatTileBbox converts tile (x, y, z) to bbox string (l,b,r,t)
+func FormatTileBbox(tile mercantile.TileID) string {
 	bbox := mercantile.XyBounds(tile)
 	formattedBbox := fmt.Sprintf("%.9f,%.9f,%.9f,%.9f", bbox.Left, bbox.Bottom, bbox.Right, bbox.Top)
 	return formattedBbox
