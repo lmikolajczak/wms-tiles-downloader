@@ -139,35 +139,54 @@ var client = &http.Client{
 	Timeout: time.Second * 30,
 }
 
+// Tile contains content received from WMS server
+// and other metadata about tile itself.
+// For example tile's path in z/x/y tree.
+type Tile struct {
+	Content []byte
+	Path    string
+}
+
 // Get sends http.Get request to WMS Server
 // and returns response content.
-func Get(tile mercantile.TileID, options Options) ([]byte, error) {
+func Get(tileID mercantile.TileID, options Options) (*Tile, error) {
 	// Parse base url and format it
 	// with the bbox of the tile.
+	// Bbox is calculated by using
+	// current tile's id (z/x/y).
 	url, err := url.Parse(options.BaseURL)
 	if err != nil {
-		return nil, err
+		return &Tile{}, err
 	}
 	q := url.Query()
-	q.Set("BBOX", FormatTileBbox(tile))
+	q.Set("BBOX", FormatTileBbox(tileID))
 	url.RawQuery = q.Encode()
 	// Request tile using defined client,
-	// read response body and return it.
+	// read response body.
 	resp, err := client.Get(url.String())
 	if err != nil {
-		return nil, err
+		return &Tile{}, err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return &Tile{}, err
+	}
+	// Create Tile struct,
+	// return pointer.
+	tile := &Tile{
+		Content: body,
+		// TODO: File extension (".png" part) should be parsed
+		// dynamically, based on --format parameter supplied by
+		// the user. 'image/png' is default.
+		Path: fmt.Sprintf("%v/%v/%v.png", tileID.Z, tileID.X, tileID.Y),
 	}
 	resp.Body.Close()
-	return body, nil
+	return tile, nil
 }
 
 // FormatTileBbox converts tile (x, y, z) to bbox string (l,b,r,t)
-func FormatTileBbox(tile mercantile.TileID) string {
-	bbox := mercantile.XyBounds(tile)
+func FormatTileBbox(tileID mercantile.TileID) string {
+	bbox := mercantile.XyBounds(tileID)
 	formattedBbox := fmt.Sprintf("%.9f,%.9f,%.9f,%.9f", bbox.Left, bbox.Bottom, bbox.Right, bbox.Top)
 	return formattedBbox
 }

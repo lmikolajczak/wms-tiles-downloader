@@ -79,14 +79,14 @@ func main() {
 	sem := make(chan bool, 16)
 	// As we loop over the tilesIds,
 	// attempt to put a bool onto the sem channel.
-	// If it isn't full, we fire off the goroutine on the tile,
+	// If it isn't full, we fire off the goroutine on the tileID,
 	// which defers a read from the semaphore which frees its slot.
-	for _, tile := range tilesIds {
+	for _, tileID := range tilesIds {
 		sem <- true
-		go func(tile mercantile.TileID) {
+		go func(tileID mercantile.TileID) {
 			defer func() { <-sem }()
 			// Get the tile
-		}(tile)
+		}(tileID)
 	}
 	// After the last goroutine is fired, there are still
 	// concurrency amount of goroutines running. In order
