@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -140,11 +142,13 @@ var client = &http.Client{
 }
 
 // Tile contains content received from WMS server
-// and other metadata about tile itself.
-// For example tile's path in z/x/y tree.
+// and other metadata about tile itself. For example
+// tile's path in z/x tree, name under which the tile
+// will be saved (y.png).
 type Tile struct {
 	Content []byte
 	Path    string
+	Name    string
 }
 
 // Get sends http.Get request to WMS Server
@@ -175,13 +179,23 @@ func Get(tileID mercantile.TileID, options Options) (*Tile, error) {
 	// return pointer.
 	tile := &Tile{
 		Content: body,
+		Path:    fmt.Sprintf("%v/%v", tileID.Z, tileID.X),
 		// TODO: File extension (".png" part) should be parsed
 		// dynamically, based on --format parameter supplied by
 		// the user. 'image/png' is default.
-		Path: fmt.Sprintf("%v/%v/%v.png", tileID.Z, tileID.X, tileID.Y),
+		Name: fmt.Sprintf("%v.png", tileID.Y),
 	}
 	resp.Body.Close()
 	return tile, nil
+}
+
+// Save saves the tile passed in
+// argument on hard drive.
+func Save(tile Tile) error {
+	err := os.MkdirAll(tile.Path, os.ModePerm)
+	filepath := path.Join(tile.Path, tile.Name)
+	err = ioutil.WriteFile(filepath, tile.Content, os.ModePerm)
+	return err
 }
 
 // FormatTileBbox converts tile (x, y, z) to bbox string (l,b,r,t)
