@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/Luqqk/wms-tiles-downloader/pkg/mercantile"
 	"github.com/Luqqk/wms-tiles-downloader/pkg/tiles"
@@ -21,7 +22,7 @@ Options:
     --url      WMS server url.                              REQUIRED
     --layer    Layer name.                                  REQUIRED
     --zooms    Comma-separated list of zooms to download.   REQUIRED
-    --bbox     Comma-separated list of bbox coordinates.    REQUIRED
+	--bbox     Comma-separated list of bbox coordinates.    REQUIRED
     --format   Tiles format.                                DEFAULT: image/png
     --width    Tile width.                                  DEFAULT: 256
     --height   Tiles hight.                                 DEFAULT: 256
@@ -63,6 +64,7 @@ func main() {
 	if err := options.ValidateOptions(); err != nil {
 		log.Fatal(err)
 	}
+	jobs := tiles.JobStats{Start: time.Now(), All: 0, Succeeded: 0, Failed: 0}
 	// Calculate tiles IDs (in X/Y/Z format)
 	// that needs to be downloaded.
 	tilesIds := mercantile.Tiles(
@@ -72,6 +74,7 @@ func main() {
 		options.Bbox.Top,
 		options.Zooms,
 	)
+	jobs.All = len(tilesIds)
 	// Process the jobs using semaphore
 	// to limit concurrency. We don't want
 	// to flood WMS servers with too many
@@ -83,9 +86,19 @@ func main() {
 	// which defers a read from the semaphore which frees its slot.
 	for _, tileID := range tilesIds {
 		sem <- true
+		jobs.ShowCurrentState()
 		go func(tileID mercantile.TileID) {
 			defer func() { <-sem }()
-			// Get the tile
+			// Get tiles and save them
+			tile, err := tiles.Get(tileID, options)
+			if err != nil {
+				jobs.Failed++
+				return
+			}
+			if err = tiles.Save(tile); err != nil {
+				jobs.Failed++
+			}
+			jobs.Succeeded++
 		}(tileID)
 	}
 	// After the last goroutine is fired, there are still
@@ -98,4 +111,5 @@ func main() {
 	for i := 0; i < cap(sem); i++ {
 		sem <- true
 	}
+	jobs.ShowSummary()
 }

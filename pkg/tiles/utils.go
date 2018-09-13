@@ -25,7 +25,6 @@ type Options struct {
 	Version string
 	Width   string
 	Height  string
-	Srs     string
 	Styles  string
 	Zooms   Zooms
 	Bbox    Bbox
@@ -69,8 +68,8 @@ func (options *Options) ParseBaseURL() error {
 	q.Set("format", options.Format)
 	q.Set("service", options.Service)
 	q.Set("version", options.Version)
-	q.Set("request", "WMS")
-	q.Set("srs", options.Srs)
+	q.Set("request", "GetMap")
+	q.Set("srs", "EPSG:3857")
 	q.Set("width", options.Width)
 	q.Set("height", options.Height)
 	q.Set("layers", options.Layer)
@@ -191,7 +190,7 @@ func Get(tileID mercantile.TileID, options Options) (*Tile, error) {
 
 // Save saves the tile passed in
 // argument on hard drive.
-func Save(tile Tile) error {
+func Save(tile *Tile) error {
 	err := os.MkdirAll(tile.Path, os.ModePerm)
 	filepath := path.Join(tile.Path, tile.Name)
 	err = ioutil.WriteFile(filepath, tile.Content, os.ModePerm)
@@ -203,4 +202,35 @@ func FormatTileBbox(tileID mercantile.TileID) string {
 	bbox := mercantile.XyBounds(tileID)
 	formattedBbox := fmt.Sprintf("%.9f,%.9f,%.9f,%.9f", bbox.Left, bbox.Bottom, bbox.Right, bbox.Top)
 	return formattedBbox
+}
+
+// JobStats stores number of jobs, that will
+// be executed, jobs which have been resolved
+// successfully or failed and Start timestamp.
+type JobStats struct {
+	Start     time.Time
+	All       int
+	Succeeded int
+	Failed    int
+}
+
+// ShowCurrentState prints current state of jobs.
+func (jobs *JobStats) ShowCurrentState() {
+	fmt.Printf("Downloading...%v/%v Succeeded: %v Failed: %v\r",
+		jobs.Succeeded+jobs.Failed,
+		jobs.All, jobs.Succeeded,
+		jobs.Failed,
+	)
+}
+
+// ShowSummary prints summary along with
+// execution time after all jobs have been
+// processed.
+func (jobs *JobStats) ShowSummary() {
+	fmt.Printf("Done: %v/%v Succeeded: %v Failed: %v Execution Time: %v\n",
+		jobs.Succeeded+jobs.Failed,
+		jobs.All, jobs.Succeeded,
+		jobs.Failed,
+		time.Since(jobs.Start).Round(time.Millisecond),
+	)
 }
