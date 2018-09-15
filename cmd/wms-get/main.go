@@ -19,16 +19,18 @@ var usageText = `Usage:
 
 Options:
 
-    --url      WMS server url.                              REQUIRED
-    --layer    Layer name.                                  REQUIRED
-    --zooms    Comma-separated list of zooms to download.   REQUIRED
-	--bbox     Comma-separated list of bbox coordinates.    REQUIRED
-    --format   Tiles format.                                DEFAULT: image/png
-    --width    Tile width.                                  DEFAULT: 256
-    --height   Tiles hight.                                 DEFAULT: 256
-    --service  Service type.                                DEFAULT: WMS
-    --version  WMS version.                                 DEFAULT: 1.1.1
-    --styles   WMS styles.                                  DEFAULT: ""
+    --url         WMS server url.                              REQUIRED
+    --layer       Layer name.                                  REQUIRED
+    --zooms       Comma-separated list of zooms to download.   REQUIRED
+    --bbox        Comma-separated list of bbox coordinates.    REQUIRED
+    --format      Tiles format.                                DEFAULT: image/png
+    --width       Tile width.                                  DEFAULT: 256
+    --height      Tiles hight.                                 DEFAULT: 256
+    --service     Service type.                                DEFAULT: WMS
+    --version     WMS version.                                 DEFAULT: 1.1.1
+    --styles      WMS styles.                                  DEFAULT: ""
+    --concurrency Limit concurrent requests to the WMS server. DEFAULT: 32
+                  Change only if you know what you're doing.
 
 Help Options:
 
@@ -50,6 +52,7 @@ func init() {
 	flag.StringVar(&options.Styles, "styles", "", "")
 	flag.Var(&options.Zooms, "zooms", "")
 	flag.Var(&options.Bbox, "bbox", "")
+	flag.IntVar(&options.Concurrency, "concurrency", 32, "")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stdout, usageText)
 	}
@@ -79,7 +82,7 @@ func main() {
 	// to limit concurrency. We don't want
 	// to flood WMS servers with too many
 	// requests at the same time.
-	sem := make(chan bool, 16)
+	sem := make(chan bool, options.Concurrency)
 	// As we loop over the tilesIds,
 	// attempt to put a bool onto the sem channel.
 	// If it isn't full, we fire off the goroutine on the tileID,

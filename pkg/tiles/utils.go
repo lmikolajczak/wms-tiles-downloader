@@ -18,16 +18,17 @@ import (
 // Options struct stores all available flags
 // and their values set by user.
 type Options struct {
-	URL     string
-	Layer   string
-	Format  string
-	Service string
-	Version string
-	Width   string
-	Height  string
-	Styles  string
-	Zooms   Zooms
-	Bbox    Bbox
+	URL         string
+	Layer       string
+	Format      string
+	Service     string
+	Version     string
+	Width       string
+	Height      string
+	Styles      string
+	Zooms       Zooms
+	Bbox        Bbox
+	Concurrency int
 	// If all options are correct,
 	// build base URL for all tiles
 	// requests.
