@@ -60,5 +60,5 @@ Command above will produce following output (tree of folders with files in z/x/y
 
 Current binaries for different versions or platforms and changelog can be found here:
 
-[v2.0.0](https://github.com/Luqqk/wms-tiles-downloader/releases/tag/v2.0.0)
-[v1.0.0](https://github.com/Luqqk/wms-tiles-downloader/releases/tag/v1.0.0)
+* [v2.0.0](https://github.com/Luqqk/wms-tiles-downloader/releases/tag/v2.0.0)
+* [v1.0.0](https://github.com/Luqqk/wms-tiles-downloader/releases/tag/v1.0.0)
