@@ -26,16 +26,18 @@ Usage:
 
 Options:
 
-    --url      WMS server url.                              REQUIRED
-    --layer    Layer name.                                  REQUIRED
-    --zooms    Comma-separated list of zooms to download.   REQUIRED
-	--bbox     Comma-separated list of bbox coordinates.    REQUIRED
-    --format   Tiles format.                                DEFAULT: image/png
-    --width    Tile width.                                  DEFAULT: 256
-    --height   Tiles hight.                                 DEFAULT: 256
-    --service  Service type.                                DEFAULT: WMS
-    --version  WMS version.                                 DEFAULT: 1.1.1
-    --styles   WMS styles.                                  DEFAULT: ""
+    --url         WMS server url.                              REQUIRED
+    --layer       Layer name.                                  REQUIRED
+    --zooms       Comma-separated list of zooms to download.   REQUIRED
+    --bbox        Comma-separated list of bbox coordinates.    REQUIRED
+    --format      Tiles format.                                DEFAULT: image/png
+    --width       Tile width.                                  DEFAULT: 256
+    --height      Tiles hight.                                 DEFAULT: 256
+    --service     Service type.                                DEFAULT: WMS
+    --version     WMS version.                                 DEFAULT: 1.1.1
+    --styles      WMS styles.                                  DEFAULT: ""
+    --concurrency Limit concurrent requests to the WMS server. DEFAULT: 32
+                  Change only if you know what you're doing.
 
 Help Options:
 
@@ -49,6 +51,10 @@ Get tiles from `http://129.206.228.72/cached/osm` server for specified `layer`, 
 ```bash
 $ wms-get --url http://129.206.228.72/cached/osm --layer osm_auto:all --zooms 14,15 --bbox 16.80,52.05,16.83,52.06
 ```
+
+Command above will produce following output (tree of folders with files in z/x/y format):
+
+![tiles_tree.png](docs/tiles_tree.png)
 
 ### Release history
 
