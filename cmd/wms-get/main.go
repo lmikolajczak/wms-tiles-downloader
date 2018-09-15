@@ -53,6 +53,7 @@ func init() {
 	flag.Var(&options.Zooms, "zooms", "")
 	flag.Var(&options.Bbox, "bbox", "")
 	flag.IntVar(&options.Concurrency, "concurrency", 32, "")
+	flag.BoolVar(&options.Help, "help", false, "")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stdout, usageText)
 	}

@@ -2,6 +2,7 @@ package tiles
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -29,6 +30,7 @@ type Options struct {
 	Zooms       Zooms
 	Bbox        Bbox
 	Concurrency int
+	Help        bool
 	// If all options are correct,
 	// build base URL for all tiles
 	// requests.
@@ -40,6 +42,10 @@ type Options struct {
 // have been passed in correct format.
 func (options *Options) ValidateOptions() error {
 	switch {
+	case options.Help:
+		flag.Usage()
+		os.Exit(0)
+		return nil
 	case options.URL == "":
 		return errors.New("Wms server url is required")
 	case options.Layer == "":
