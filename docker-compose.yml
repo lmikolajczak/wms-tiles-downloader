@@ -1,0 +1,7 @@
+services:
+  wms-tiles-downloader:
+    build: .
+    image: wms-tiles-downloader
+    container_name: wms-tiles-downloader
+    volumes:
+      - .:/code
