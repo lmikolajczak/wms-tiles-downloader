@@ -67,6 +67,14 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("ERR: %s\n", err)
 		}
+		output, err := cmd.Flags().GetString("output")
+		if err != nil {
+			fmt.Printf("ERR: %s\n", err)
+		}
+		timeout, err := cmd.Flags().GetInt("timeout")
+		if err != nil {
+			fmt.Printf("ERR: %s\n", err)
+		}
 		for _, tileID := range tileIDs {
 			sem <- true
 			go func(tileID mercantile.TileID) {
@@ -75,11 +83,13 @@ var getCmd = &cobra.Command{
 				tile, err := WMSClient.GetTile(
 					ctx,
 					tileID,
+					timeout,
 					wms.WithLayers(layer),
 					wms.WithStyles(style),
 					wms.WithWidth(width),
 					wms.WithHeight(height),
 					wms.WithFormat(format),
+					wms.WithOutputDir(output),
 				)
 				if err != nil {
 					fmt.Printf("ERR: %s\n", err)
@@ -135,6 +145,12 @@ func init() {
 	)
 	getCmd.Flags().String(
 		"version", "1.3.0", "WMS server version",
+	)
+	getCmd.Flags().StringP(
+		"output", "o", "", "Output directory for downloaded tiles",
+	)
+	getCmd.Flags().IntP(
+		"timeout", "t", 10000, "HTTP request timeout (in milliseconds)",
 	)
 	getCmd.Flags().Int(
 		"concurrency", 16, "Limit of concurrent requests to the WMS server",

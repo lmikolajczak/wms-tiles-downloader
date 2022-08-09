@@ -84,7 +84,7 @@ func (c *Client) BaseURL() string {
 	return u.String()
 }
 
-func (c *Client) GetTile(ctx context.Context, tileID mercantile.TileID, params ...TileOption) (*Tile, error) {
+func (c *Client) GetTile(ctx context.Context, tileID mercantile.TileID, timeout int, params ...TileOption) (*Tile, error) {
 	tile := NewTile(tileID, params...)
 
 	tileURL, err := tile.url(c.BaseURL())
@@ -92,7 +92,7 @@ func (c *Client) GetTile(ctx context.Context, tileID mercantile.TileID, params .
 		return nil, err
 	}
 
-	body, err := c.request(ctx, http.MethodGet, tileURL)
+	body, err := c.request(ctx, http.MethodGet, tileURL, timeout)
 	if err != nil {
 		return nil, err
 	}
@@ -102,13 +102,15 @@ func (c *Client) GetTile(ctx context.Context, tileID mercantile.TileID, params .
 }
 
 func (c *Client) SaveTile(tile *Tile) error {
-	err := os.MkdirAll(tile.Path(), os.ModePerm)
+	outputPath := path.Join(tile.outputdir, tile.Path())
+
+	err := os.MkdirAll(outputPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
 
 	err = ioutil.WriteFile(
-		path.Join(tile.Path(), tile.Name()), tile.Body(), os.ModePerm,
+		path.Join(outputPath, tile.Name()), tile.Body(), os.ModePerm,
 	)
 	if err != nil {
 		return err
@@ -117,8 +119,8 @@ func (c *Client) SaveTile(tile *Tile) error {
 	return nil
 }
 
-func (c *Client) request(ctx context.Context, method string, url string) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+func (c *Client) request(ctx context.Context, method string, url string, timeout int) ([]byte, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Millisecond)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, method, url, nil)
