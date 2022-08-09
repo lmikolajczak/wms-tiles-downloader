@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
 	"github.com/stretchr/testify/assert"
+	"os"
+	"path"
 	"testing"
 )
 
@@ -45,6 +47,36 @@ func TestWithHeight(t *testing.T) {
 	WithHeight(expected)(tile)
 
 	assert.Equal(t, expected, tile.height)
+}
+
+func TestWithOutputDir(t *testing.T) {
+	cwd, _ := os.Getwd()
+	tests := map[string]struct {
+		OutputDir string
+		Expected  string
+	}{
+		"no output path provided - use current working directory": {
+			OutputDir: "",
+			Expected:  cwd,
+		},
+		"relative output path provided": {
+			OutputDir: "path/wms-tiles-downloader",
+			Expected:  path.Join(cwd, "path/wms-tiles-downloader"),
+		},
+		"absolute output path provided": {
+			OutputDir: "/path/tiles",
+			Expected:  "/path/tiles",
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			tile := &Tile{}
+			WithOutputDir(test.OutputDir)(tile)
+
+			assert.Equal(t, test.Expected, tile.outputdir)
+		})
+	}
 }
 
 func TestTile_Name(t *testing.T) {

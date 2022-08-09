@@ -126,7 +126,7 @@ func TestClient_GetTile(t *testing.T) {
 			transport.RegisterResponder(http.MethodGet, "", test.Resp)
 
 			tileID := mercantile.TileID{X: 17, Y: 10, Z: 5}
-			tile, err := WMSClient.GetTile(context.Background(), tileID)
+			tile, err := WMSClient.GetTile(context.Background(), tileID, 10000)
 
 			assert.Equal(t, test.ExpectedError, err)
 			if err != nil {

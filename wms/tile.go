@@ -4,19 +4,22 @@ import (
 	"fmt"
 	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
 	"net/url"
+	"path"
+	"path/filepath"
 	"strconv"
 )
 
 type Tile struct {
-	id     mercantile.TileID
-	name   string
-	path   string
-	body   []byte
-	layers string
-	styles string
-	format string
-	width  int
-	height int
+	id        mercantile.TileID
+	name      string
+	path      string
+	body      []byte
+	layers    string
+	styles    string
+	format    string
+	width     int
+	height    int
+	outputdir string
 }
 
 type TileOption func(t *Tile)
@@ -48,6 +51,15 @@ func WithWidth(width int) TileOption {
 func WithHeight(height int) TileOption {
 	return func(t *Tile) {
 		t.height = height
+	}
+}
+
+func WithOutputDir(dir string) TileOption {
+	if !path.IsAbs(dir) {
+		dir, _ = filepath.Abs(dir)
+	}
+	return func(t *Tile) {
+		t.outputdir = dir
 	}
 }
 
