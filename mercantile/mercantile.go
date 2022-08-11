@@ -1,5 +1,5 @@
 /*
-Code below is a ports some functions from Python's https://github.com/mapbox/mercantile package.
+Code below ports some functions from Python's https://github.com/mapbox/mercantile package.
 */
 
 package mercantile
