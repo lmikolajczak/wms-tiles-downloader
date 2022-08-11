@@ -5,7 +5,7 @@ Command line application for downloading map tiles from given WMS server.
 ### Installation
 
 ```
-go get github.com/lmikolajczak/wms-tiles-downloader@latest
+go install github.com/lmikolajczak/wms-tiles-downloader@latest
 ```
 
 Go will automatically install it in your $GOPATH/bin directory which should be in your $PATH.
@@ -71,4 +71,45 @@ root@df62f3f34fef:/tiles# tree
 |       |-- 673.png
 |       `-- 674.png
 ...more directories...
+```
+
+### Alternative - use as a library ([pkg.go.dev](https://pkg.go.dev/github.com/lmikolajczak/wms-tiles-downloader/wms))
+
+```
+go get github.com/lmikolajczak/wms-tiles-downloader@latest
+```
+
+Examples:
+```go
+// Initialize new client
+client := wms.NewClient(
+	wms.WithBaseURL("https://wms-url.example"),
+	// Other variadic options
+	// wms.WithHTTPClient(*http.Client),
+	// wms.WithVersion(string),
+)
+```
+
+```go
+// Get tile with the given ID
+tile, err := client.GetTile(
+	context.Background(),
+	mercantile.TileID{X: 17, Y: 10, Z: 5},
+	// timeout (in milliseconds)
+	10000,
+	// Other variadic options
+	// wms.WithLayers(string),
+	// wms.WithStyles(string),
+	// wms.WithWidth(int),
+	// wms.WithHeight(int),
+	// wms.WithFormat(string),
+	// wms.WithOutputDir(string),
+)
+// handle error
+```
+
+```go
+// Save tile on disk
+err := client.SaveTile(tile)
+// handle error
 ```
