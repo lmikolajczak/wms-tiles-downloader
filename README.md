@@ -5,7 +5,7 @@ Command line application for downloading map tiles from given WMS server.
 ### Installation
 
 ```
-go install github.com/lmikolajczak/wms-tiles-downloader@latest
+go install github.com/lmikolajczak/wms-tiles-downloader@v0.2.1
 ```
 
 Go will automatically install it in your $GOPATH/bin directory which should be in your $PATH.
@@ -76,5 +76,5 @@ root@df62f3f34fef:/tiles# tree
 ### Alternative - use as a library ([pkg.go.dev](https://pkg.go.dev/github.com/lmikolajczak/wms-tiles-downloader/wms))
 
 ```
-go get github.com/lmikolajczak/wms-tiles-downloader@latest
+go get github.com/lmikolajczak/wms-tiles-downloader@v0.2.1
 ```
