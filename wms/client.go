@@ -26,6 +26,7 @@ type Client struct {
 	service          string
 	requestType      string
 	spatialRefSystem string
+	queryStrings     map[string]string
 }
 
 type ClientOption func(c *Client)
@@ -45,6 +46,12 @@ func WithBaseURL(baseUrl string) ClientOption {
 func WithVersion(version string) ClientOption {
 	return func(c *Client) {
 		c.version = version
+	}
+}
+
+func WithQueryString(qs map[string]string) ClientOption {
+	return func(c *Client) {
+		c.queryStrings = qs
 	}
 }
 
@@ -79,6 +86,11 @@ func (c *Client) BaseURL() string {
 	} else {
 		params.Add("srs", c.spatialRefSystem)
 	}
+	
+	for name, param := range c.queryStrings {
+		params.Add(name, param)
+	}
+
 	u.RawQuery = params.Encode()
 
 	return u.String()

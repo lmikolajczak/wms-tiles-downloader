@@ -36,9 +36,10 @@ func TestWithVersion(t *testing.T) {
 
 func TestClient_BaseURL(t *testing.T) {
 	tests := map[string]struct {
-		BaseURL  string
-		Version  string
-		Expected string
+		BaseURL      string
+		Version      string
+		Expected     string
+		QueryStrings map[string]string
 	}{
 		"Get base URL for WMS v1.3.0": {
 			BaseURL:  "https://wms.service.com",
@@ -65,6 +66,12 @@ func TestClient_BaseURL(t *testing.T) {
 			Version:  v1_3_0,
 			Expected: "https://wms.service.com?crs=EPSG%3A3857&request=GetMap&service=WMS&version=1.3.0",
 		},
+		"Set query string params if provided": {
+			BaseURL:      "wms.service.com",
+			Version:      v1_3_0,
+			Expected:     "https://wms.service.com?crs=EPSG%3A3857&key=value&request=GetMap&service=WMS&version=1.3.0",
+			QueryStrings: map[string]string{"key": "value"},
+		},
 		"Do not override HTTP": {
 			BaseURL:  "http://wms.service.com",
 			Version:  v1_3_0,
@@ -77,6 +84,7 @@ func TestClient_BaseURL(t *testing.T) {
 			c := NewClient(
 				WithBaseURL(test.BaseURL),
 				WithVersion(test.Version),
+				WithQueryString(test.QueryStrings),
 			)
 			assert.Equal(t, test.Expected, c.BaseURL())
 		})
