@@ -2,6 +2,7 @@ package wms
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
 	"io/ioutil"
@@ -37,12 +38,6 @@ func WithHTTPClient(httpClient *http.Client) ClientOption {
 	}
 }
 
-func WithBaseURL(baseUrl string) ClientOption {
-	return func(c *Client) {
-		c.baseURL = baseUrl
-	}
-}
-
 func WithVersion(version string) ClientOption {
 	return func(c *Client) {
 		c.version = version
@@ -55,9 +50,14 @@ func WithQueryString(qs map[string]string) ClientOption {
 	}
 }
 
-func NewClient(options ...ClientOption) *Client {
+func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
+	if baseURL == "" {
+		return nil, errors.New("baseURL is required")
+	}
+
 	c := &Client{
 		httpClient:       http.DefaultClient,
+		baseURL:          baseURL,
 		version:          v1_3_0,
 		service:          "WMS",
 		requestType:      "GetMap",
@@ -68,7 +68,7 @@ func NewClient(options ...ClientOption) *Client {
 		option(c)
 	}
 
-	return c
+	return c, nil
 }
 
 func (c *Client) BaseURL() string {
@@ -86,7 +86,7 @@ func (c *Client) BaseURL() string {
 	} else {
 		params.Add("srs", c.spatialRefSystem)
 	}
-	
+
 	for name, param := range c.queryStrings {
 		params.Add(name, param)
 	}
