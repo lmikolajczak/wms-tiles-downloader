@@ -36,7 +36,10 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("ERR: %s\n", err)
 		}
-		WMSClient := wms.NewClient(wms.WithBaseURL(url), wms.WithVersion(version))
+		WMSClient, err := wms.NewClient(url, wms.WithVersion(version))
+		if err != nil {
+			fmt.Printf("ERR: %s\n", err)
+		}
 
 		// Use semaphore pattern to limit concurrency. We don't want to flood WMS
 		// server with too many requests.
