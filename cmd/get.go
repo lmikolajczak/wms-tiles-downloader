@@ -32,11 +32,15 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("ERR: %s\n", err)
 		}
+		params, err := cmd.Flags().GetStringToString("params")
+		if err != nil {
+			fmt.Printf("ERR: %s\n", err)
+		}
 		version, err := cmd.Flags().GetString("version")
 		if err != nil {
 			fmt.Printf("ERR: %s\n", err)
 		}
-		WMSClient, err := wms.NewClient(url, wms.WithVersion(version))
+		WMSClient, err := wms.NewClient(url, wms.WithQueryString(params), wms.WithVersion(version))
 		if err != nil {
 			fmt.Printf("ERR: %s\n", err)
 		}
@@ -157,5 +161,8 @@ func init() {
 	)
 	getCmd.Flags().Int(
 		"concurrency", 16, "Limit of concurrent requests to the WMS server",
+	)
+	getCmd.Flags().StringToString(
+		"params", nil, "Custom query string params",
 	)
 }
