@@ -16,23 +16,23 @@ Go will automatically install it in your $GOPATH/bin directory which should be i
 Download tiles from WMS server based on provided options.
 
 Usage:
-wms-tiles-downloader get [flags]
+    wms-tiles-downloader get [flags]
 
 Flags:
--b, --bbox float64Slice       Comma-separated list of bbox coords (default [])
-    --concurrency int         Limit of concurrent requests to the WMS server (default 16)
-    --format string           Tile format (default "image/png")
-    --height int              Tile height (default 256)
--h, --help                    Help for get
--l, --layer string            Layer name
--o, --output string           Output directory for downloaded tiles
-    --params stringToString   Custom query string params (default [])
--s, --style string            Layer style
--t, --timeout int             HTTP request timeout (in milliseconds) (default 10000)
--u, --url string              WMS server url
-    --version string          WMS server version (default "1.3.0")
-    --width int               Tile width (default 256)
--z, --zoom ints               Comma-separated list of zooms
+    -b, --bbox float64Slice       Comma-separated list of bbox coords (default [])
+        --concurrency int         Limit of concurrent requests to the WMS server (default 16)
+        --format string           Tile format (default "image/png")
+        --height int              Tile height (default 256)
+    -h, --help                    Help for get
+    -l, --layer string            Layer name
+    -o, --output string           Output directory for downloaded tiles
+        --params stringToString   Custom query string params (default [])
+    -s, --style string            Layer style
+    -t, --timeout int             HTTP request timeout (in milliseconds) (default 10000)
+    -u, --url string              WMS server url
+        --version string          WMS server version (default "1.3.0")
+        --width int               Tile width (default 256)
+    -z, --zoom ints               Comma-separated list of zooms
 ```
 
 ### Examples
