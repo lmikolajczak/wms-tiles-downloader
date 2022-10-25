@@ -22,3 +22,9 @@ require (
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+retract (
+	// Wrongly published versions
+	v2.0.0+incompatible
+	v1.0.0
+)
