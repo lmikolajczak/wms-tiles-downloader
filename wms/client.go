@@ -14,10 +14,10 @@ import (
 )
 
 const (
-	v1_0_0 string = "1.0.0"
-	v1_1_0        = "1.1.0"
-	v1_1_1        = "1.1.1"
-	v1_3_0        = "1.3.0"
+	V1_0_0 string = "1.0.0"
+	V1_1_0        = "1.1.0"
+	V1_1_1        = "1.1.1"
+	V1_3_0        = "1.3.0"
 )
 
 type Client struct {
@@ -58,7 +58,7 @@ func NewClient(baseURL string, options ...ClientOption) (*Client, error) {
 	c := &Client{
 		httpClient:       http.DefaultClient,
 		baseURL:          baseURL,
-		version:          v1_3_0,
+		version:          V1_3_0,
 		service:          "WMS",
 		requestType:      "GetMap",
 		spatialRefSystem: "EPSG:3857",
@@ -81,7 +81,7 @@ func (c *Client) BaseURL() string {
 	params.Add("version", c.version)
 	params.Add("service", c.service)
 	params.Add("request", c.requestType)
-	if c.version == v1_3_0 {
+	if c.version == V1_3_0 {
 		params.Add("crs", c.spatialRefSystem)
 	} else {
 		params.Add("srs", c.spatialRefSystem)
@@ -99,7 +99,7 @@ func (c *Client) BaseURL() string {
 func (c *Client) GetTile(ctx context.Context, tileID mercantile.TileID, timeout int, params ...TileOption) (*Tile, error) {
 	tile := NewTile(tileID, params...)
 
-	tileURL, err := tile.url(c.BaseURL())
+	tileURL, err := tile.Url(c.BaseURL())
 	if err != nil {
 		return nil, err
 	}

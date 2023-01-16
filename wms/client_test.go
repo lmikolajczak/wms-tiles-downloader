@@ -1,10 +1,11 @@
-package wms
+package wms_test
 
 import (
 	"context"
 	"errors"
 	"github.com/jarcoal/httpmock"
 	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
+	"github.com/lmikolajczak/wms-tiles-downloader/wms"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
@@ -20,53 +21,53 @@ func TestClient_BaseURL(t *testing.T) {
 	}{
 		"Get base URL for WMS v1.3.0": {
 			BaseURL: "https://wms.service.com",
-			Version: v1_3_0,
+			Version: wms.V1_3_0,
 			Want:    "https://wms.service.com?crs=EPSG%3A3857&request=GetMap&service=WMS&version=1.3.0",
 		},
 		"Get base URL for WMS v1.1.1": {
 			BaseURL: "https://wms.service.com",
-			Version: v1_1_1,
+			Version: wms.V1_1_1,
 			Want:    "https://wms.service.com?request=GetMap&service=WMS&srs=EPSG%3A3857&version=1.1.1",
 		},
 		"Get base URL for WMS v1.1.0": {
 			BaseURL: "https://wms.service.com",
-			Version: v1_1_0,
+			Version: wms.V1_1_0,
 			Want:    "https://wms.service.com?request=GetMap&service=WMS&srs=EPSG%3A3857&version=1.1.0",
 		},
 		"Get base URL for WMS v1.0.0": {
 			BaseURL: "https://wms.service.com",
-			Version: v1_0_0,
+			Version: wms.V1_0_0,
 			Want:    "https://wms.service.com?request=GetMap&service=WMS&srs=EPSG%3A3857&version=1.0.0",
 		},
 		"Set HTTPS if scheme is missing": {
 			BaseURL: "wms.service.com",
-			Version: v1_3_0,
+			Version: wms.V1_3_0,
 			Want:    "https://wms.service.com?crs=EPSG%3A3857&request=GetMap&service=WMS&version=1.3.0",
 		},
 		"Set query string params if provided": {
 			BaseURL:      "wms.service.com",
-			Version:      v1_3_0,
+			Version:      wms.V1_3_0,
 			Want:         "https://wms.service.com?crs=EPSG%3A3857&key=value&request=GetMap&service=WMS&version=1.3.0",
 			QueryStrings: map[string]string{"key": "value"},
 		},
 		"Do not override HTTP": {
 			BaseURL: "http://wms.service.com",
-			Version: v1_3_0,
+			Version: wms.V1_3_0,
 			Want:    "http://wms.service.com?crs=EPSG%3A3857&request=GetMap&service=WMS&version=1.3.0",
 		},
 		"BaseURL is required": {
 			BaseURL: "",
-			Version: v1_0_0,
+			Version: wms.V1_0_0,
 			WantErr: errors.New("baseURL is required"),
 		},
 	}
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			client, err := NewClient(
+			client, err := wms.NewClient(
 				test.BaseURL,
-				WithVersion(test.Version),
-				WithQueryString(test.QueryStrings),
+				wms.WithVersion(test.Version),
+				wms.WithQueryString(test.QueryStrings),
 			)
 			if err != nil {
 				testErrorMessage(t, err, test.WantErr)
@@ -109,9 +110,9 @@ func TestClient_GetTile(t *testing.T) {
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			transport := httpmock.NewMockTransport()
-			client, err := NewClient(
+			client, err := wms.NewClient(
 				test.BaseURL,
-				WithHTTPClient(
+				wms.WithHTTPClient(
 					&http.Client{
 						Transport: transport,
 					},

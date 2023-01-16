@@ -1,11 +1,14 @@
-package wms
+package wms_test
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/lmikolajczak/wms-tiles-downloader/wms"
+)
 
 func ExampleNewClient() {
-	client, err := NewClient(
+	client, err := wms.NewClient(
 		"wms.server.url",
-		WithVersion("1.3.0"),
+		wms.WithVersion("1.3.0"),
 	)
 	if err != nil {
 		fmt.Println(err)

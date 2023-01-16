@@ -1,8 +1,9 @@
-package wms
+package wms_test
 
 import (
 	"fmt"
 	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
+	"github.com/lmikolajczak/wms-tiles-downloader/wms"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"path"
@@ -10,43 +11,43 @@ import (
 )
 
 func TestWithLayer(t *testing.T) {
-	tile := &Tile{}
+	tile := &wms.Tile{}
 	expected := "layer:name"
-	WithLayers(expected)(tile)
+	wms.WithLayers(expected)(tile)
 
-	assert.Equal(t, expected, tile.layers)
+	assert.Equal(t, expected, tile.Layer())
 }
 
 func TestWithStyles(t *testing.T) {
-	tile := &Tile{}
+	tile := &wms.Tile{}
 	expected := "styles:name"
-	WithStyles(expected)(tile)
+	wms.WithStyles(expected)(tile)
 
-	assert.Equal(t, expected, tile.styles)
+	assert.Equal(t, expected, tile.Style())
 }
 
 func TestWithFormat(t *testing.T) {
-	tile := &Tile{}
+	tile := &wms.Tile{}
 	expected := "test/image/png"
-	WithFormat(expected)(tile)
+	wms.WithFormat(expected)(tile)
 
-	assert.Equal(t, expected, tile.format)
+	assert.Equal(t, expected, tile.Format())
 }
 
 func TestWithWidth(t *testing.T) {
-	tile := &Tile{}
+	tile := &wms.Tile{}
 	expected := 128
-	WithWidth(expected)(tile)
+	wms.WithWidth(expected)(tile)
 
-	assert.Equal(t, expected, tile.width)
+	assert.Equal(t, expected, tile.Width())
 }
 
 func TestWithHeight(t *testing.T) {
-	tile := &Tile{}
+	tile := &wms.Tile{}
 	expected := 128
-	WithHeight(expected)(tile)
+	wms.WithHeight(expected)(tile)
 
-	assert.Equal(t, expected, tile.height)
+	assert.Equal(t, expected, tile.Height())
 }
 
 func TestWithOutputDir(t *testing.T) {
@@ -71,17 +72,17 @@ func TestWithOutputDir(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			tile := &Tile{}
-			WithOutputDir(test.OutputDir)(tile)
+			tile := &wms.Tile{}
+			wms.WithOutputDir(test.OutputDir)(tile)
 
-			assert.Equal(t, test.Expected, tile.outputdir)
+			assert.Equal(t, test.Expected, tile.OutputDir())
 		})
 	}
 }
 
 func TestTile_Name(t *testing.T) {
 	x, y, z := 17, 10, 5
-	tile := NewTile(mercantile.TileID{X: x, Y: y, Z: z})
+	tile := wms.NewTile(mercantile.TileID{X: x, Y: y, Z: z})
 	name := tile.Name()
 
 	expectedName := fmt.Sprintf("%v.png", y)
@@ -90,7 +91,7 @@ func TestTile_Name(t *testing.T) {
 
 func TestTile_Path(t *testing.T) {
 	x, y, z := 17, 10, 5
-	tile := NewTile(mercantile.TileID{X: x, Y: y, Z: z})
+	tile := wms.NewTile(mercantile.TileID{X: x, Y: y, Z: z})
 	path := tile.Path()
 
 	expectedPath := fmt.Sprintf("%v/%v", z, x)
@@ -98,7 +99,7 @@ func TestTile_Path(t *testing.T) {
 }
 
 func TestTile_Body(t *testing.T) {
-	tile := NewTile(mercantile.TileID{X: 17, Y: 10, Z: 5})
+	tile := wms.NewTile(mercantile.TileID{X: 17, Y: 10, Z: 5})
 	body := tile.Body()
 
 	expectedBody := make([]byte, 0)
@@ -106,7 +107,7 @@ func TestTile_Body(t *testing.T) {
 }
 
 func TestTile_Bbox(t *testing.T) {
-	tile := NewTile(mercantile.TileID{X: 17, Y: 10, Z: 5})
+	tile := wms.NewTile(mercantile.TileID{X: 17, Y: 10, Z: 5})
 	bbox := tile.Bbox()
 
 	expectedBbox := "1252344.271424328,6261721.357121640,2504688.542848655,7514065.628545966"
@@ -115,8 +116,8 @@ func TestTile_Bbox(t *testing.T) {
 
 func TestTile_url(t *testing.T) {
 	baseUrl := "https://wms.service.com?crs=EPSG%3A3857&request=GetMap&service=WMS&version=1.3.0"
-	tile := NewTile(mercantile.TileID{X: 17, Y: 10, Z: 5})
-	url, _ := tile.url(baseUrl)
+	tile := wms.NewTile(mercantile.TileID{X: 17, Y: 10, Z: 5})
+	url, _ := tile.Url(baseUrl)
 
 	expectedTileUrl := "https://wms.service.com?bbox=1252344.271424328%2C6261721.357121640%2C2504688.542848655%2C7514065.628545966&crs=EPSG%3A3857&format=image%2Fpng&height=256&layers=&request=GetMap&service=WMS&styles=&version=1.3.0&width=256"
 	assert.Equal(t, expectedTileUrl, url)
@@ -133,20 +134,20 @@ func TestNewTile(t *testing.T) {
 	expectedWidth := 128
 	expectedHeight := 128
 
-	tile := NewTile(
+	tile := wms.NewTile(
 		mercantile.TileID{X: expectedX, Y: expectedY, Z: expectedZ},
-		WithLayers(expectedLayer),
-		WithStyles(expectedStyles),
-		WithFormat(expectedFormat),
-		WithWidth(expectedWidth),
-		WithHeight(expectedHeight),
+		wms.WithLayers(expectedLayer),
+		wms.WithStyles(expectedStyles),
+		wms.WithFormat(expectedFormat),
+		wms.WithWidth(expectedWidth),
+		wms.WithHeight(expectedHeight),
 	)
 
-	assert.Equal(t, expectedX, tile.id.X)
-	assert.Equal(t, expectedY, tile.id.Y)
-	assert.Equal(t, expectedZ, tile.id.Z)
+	assert.Equal(t, expectedX, tile.X())
+	assert.Equal(t, expectedY, tile.Y())
+	assert.Equal(t, expectedZ, tile.Z())
 
-	assert.Equal(t, expectedName, tile.name)
-	assert.Equal(t, expectedPath, tile.path)
-	assert.Equal(t, expectedBody, tile.body)
+	assert.Equal(t, expectedName, tile.Name())
+	assert.Equal(t, expectedPath, tile.Path())
+	assert.Equal(t, expectedBody, tile.Body())
 }

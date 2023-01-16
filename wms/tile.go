@@ -93,6 +93,42 @@ func (t *Tile) Body() []byte {
 	return t.body
 }
 
+func (t *Tile) Layer() string {
+	return t.layers
+}
+
+func (t *Tile) Style() string {
+	return t.styles
+}
+
+func (t *Tile) Format() string {
+	return t.format
+}
+
+func (t *Tile) Width() int {
+	return t.width
+}
+
+func (t *Tile) Height() int {
+	return t.height
+}
+
+func (t *Tile) OutputDir() string {
+	return t.outputdir
+}
+
+func (t *Tile) X() int {
+	return t.id.X
+}
+
+func (t *Tile) Y() int {
+	return t.id.Y
+}
+
+func (t *Tile) Z() int {
+	return t.id.Z
+}
+
 func (t *Tile) Bbox() string {
 	bbox := mercantile.XyBounds(t.id)
 
@@ -101,7 +137,7 @@ func (t *Tile) Bbox() string {
 	)
 }
 
-func (t *Tile) url(baseUrl string) (string, error) {
+func (t *Tile) Url(baseUrl string) (string, error) {
 	u, err := url.Parse(baseUrl)
 	if err != nil {
 		return "", err
