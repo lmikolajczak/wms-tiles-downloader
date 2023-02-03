@@ -3,7 +3,6 @@ package wms_test
 import (
 	"context"
 	"errors"
-	"github.com/jarcoal/httpmock"
 	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
 	"github.com/lmikolajczak/wms-tiles-downloader/wms"
 	"github.com/stretchr/testify/assert"
@@ -80,48 +79,31 @@ func TestClient_BaseURL(t *testing.T) {
 
 func TestClient_GetTile(t *testing.T) {
 	tests := map[string]struct {
-		BaseURL       string
-		Resp          httpmock.Responder
-		ExpectedBody  []byte
-		ExpectedError error
+		HTTPStatusCode int
+		ResponseBody   []byte
+		ExpectedError  error
 	}{
 		"WMS server returned tile": {
-			BaseURL: "https://wms.service.com",
-			Resp: func(req *http.Request) (*http.Response, error) {
-				return httpmock.NewBytesResponse(
-					http.StatusOK, []byte("tile body"),
-				), nil
-			},
-			ExpectedBody:  []byte("tile body"),
-			ExpectedError: nil,
+			HTTPStatusCode: http.StatusOK,
+			ResponseBody:   []byte("tile body"),
+			ExpectedError:  nil,
 		},
 		"WMS server returned an error": {
-			BaseURL: "https://wms.service.com",
-			Resp: func(req *http.Request) (*http.Response, error) {
-				return httpmock.NewBytesResponse(
-					http.StatusUnauthorized, []byte(""),
-				), nil
-			},
-			ExpectedBody:  nil,
-			ExpectedError: errors.New("error making HTTP request (401): Unauthorized"),
+			HTTPStatusCode: http.StatusUnauthorized,
+			ResponseBody:   []byte(""),
+			ExpectedError:  errors.New("error making HTTP request (401): Unauthorized"),
 		},
 	}
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			transport := httpmock.NewMockTransport()
-			client, err := wms.NewClient(
-				test.BaseURL,
-				wms.WithHTTPClient(
-					&http.Client{
-						Transport: transport,
-					},
-				),
-			)
-			if err != nil {
-				t.Fatalf("err = %v; want: nil", err)
-			}
-			transport.RegisterResponder(http.MethodGet, "", test.Resp)
+			client, server, teardown := wms.TestClientWithServer(t)
+			defer teardown()
+
+			server.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(test.HTTPStatusCode)
+				w.Write(test.ResponseBody)
+			})
 
 			tileID := mercantile.TileID{X: 17, Y: 10, Z: 5}
 			tile, err := client.GetTile(context.Background(), tileID, 10000)
@@ -131,7 +113,7 @@ func TestClient_GetTile(t *testing.T) {
 				return
 			}
 
-			assert.Equal(t, test.ExpectedBody, tile.Body())
+			assert.Equal(t, test.ResponseBody, tile.Body())
 		})
 	}
 }
