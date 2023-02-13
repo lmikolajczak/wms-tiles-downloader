@@ -37,7 +37,7 @@ Flags:
 
 ### Examples
 
-![demo](https://user-images.githubusercontent.com/10035716/182269225-80194102-a59e-4fe3-bf78-0b5d1ea457d4.gif)
+![demo](https://user-images.githubusercontent.com/10035716/219978042-a9df3807-34ca-4829-842e-c295714453a2.gif)
 
 Command above will produce following output - tree of folders with files in Z/X/Y format:
 
@@ -79,3 +79,7 @@ root@df62f3f34fef:/tiles# tree
 ```
 go get github.com/lmikolajczak/wms-tiles-downloader@v0.3.1
 ```
+
+### Disclaimer
+
+Please keep in mind terms and conditions of any tile provider (WMS server) from which you plan to download tiles.
