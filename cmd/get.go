@@ -40,7 +40,13 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("ERR: %s\n", err)
 		}
-		WMSClient, err := wms.NewClient(url, wms.WithQueryString(params), wms.WithVersion(version))
+		auth, err := cmd.Flags().GetString("auth")
+		if err != nil {
+			fmt.Printf("ERR: %s\n", err)
+		}
+		WMSClient, err := wms.NewClient(
+			url, wms.WithBasicAuth(auth), wms.WithQueryString(params), wms.WithVersion(version),
+		)
 		if err != nil {
 			fmt.Printf("ERR: %s\n", err)
 		}
@@ -164,5 +170,8 @@ func init() {
 	)
 	getCmd.Flags().StringToString(
 		"params", nil, "Custom query string params",
+	)
+	getCmd.Flags().String(
+		"auth", "", "Basic HTTP auth credentials separated by semicolon (username:password)",
 	)
 }

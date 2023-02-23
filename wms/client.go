@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"strings"
 	"time"
 )
 
@@ -23,6 +24,8 @@ const (
 type Client struct {
 	httpClient       *http.Client
 	baseURL          string
+	username         string
+	password         string
 	version          string
 	service          string
 	requestType      string
@@ -47,6 +50,21 @@ func WithVersion(version string) ClientOption {
 func WithQueryString(qs map[string]string) ClientOption {
 	return func(c *Client) {
 		c.queryStrings = qs
+	}
+}
+
+func WithBasicAuth(credentials string) ClientOption {
+	username, password := "", ""
+
+	auth := strings.Split(credentials, ":")
+	if len(auth) == 2 {
+		username = auth[0]
+		password = auth[1]
+	}
+
+	return func(c *Client) {
+		c.username = username
+		c.password = password
 	}
 }
 
@@ -138,6 +156,10 @@ func (c *Client) request(ctx context.Context, method string, url string, timeout
 	req, err := http.NewRequestWithContext(ctx, method, url, nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if c.username != "" && c.password != "" {
+		req.SetBasicAuth(c.username, c.password)
 	}
 
 	res, err := c.httpClient.Do(req)

@@ -77,6 +77,41 @@ func TestClient_BaseURL(t *testing.T) {
 	}
 }
 
+func TestClientBasicHTTPAuth(t *testing.T) {
+	tests := map[string]struct {
+		Credentials     string
+		ExpectedHeaders map[string]string
+	}{
+		"With valid credentials": {
+			Credentials: "username:password",
+			ExpectedHeaders: map[string]string{
+				"Authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+			},
+		},
+		"With invalid credentials format": {
+			Credentials: "usernamepassword",
+			ExpectedHeaders: map[string]string{
+				"Authorization": "",
+			},
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			client, server, teardown := wms.TestAuthClientWithServer(t, test.Credentials)
+			defer teardown()
+
+			server.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+				for key, value := range test.ExpectedHeaders {
+					assert.Equal(t, value, r.Header.Get(key))
+				}
+			})
+
+			client.GetTile(context.Background(), mercantile.TileID{X: 17, Y: 10, Z: 5}, 10000)
+		})
+	}
+}
+
 func TestClient_GetTile(t *testing.T) {
 	tests := map[string]struct {
 		HTTPStatusCode int
