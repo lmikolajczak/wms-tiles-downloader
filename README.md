@@ -5,7 +5,7 @@ Command line application for downloading map tiles from given WMS server.
 ### Installation
 
 ```
-go install github.com/lmikolajczak/wms-tiles-downloader@v0.3.1
+go install github.com/lmikolajczak/wms-tiles-downloader@v0.3.2
 ```
 
 Go will automatically install it in your $GOPATH/bin directory which should be in your $PATH.
@@ -19,20 +19,21 @@ Usage:
     wms-tiles-downloader get [flags]
 
 Flags:
-    -b, --bbox float64Slice       Comma-separated list of bbox coords (default [])
-        --concurrency int         Limit of concurrent requests to the WMS server (default 16)
-        --format string           Tile format (default "image/png")
-        --height int              Tile height (default 256)
-    -h, --help                    Help for get
-    -l, --layer string            Layer name
-    -o, --output string           Output directory for downloaded tiles
-        --params stringToString   Custom query string params (default [])
-    -s, --style string            Layer style
-    -t, --timeout int             HTTP request timeout (in milliseconds) (default 10000)
-    -u, --url string              WMS server url
-        --version string          WMS server version (default "1.3.0")
-        --width int               Tile width (default 256)
-    -z, --zoom ints               Comma-separated list of zooms
+        --auth        string         Basic HTTP auth credentials separated by semicolon (username:password)
+    -b, --bbox        float64Slice   Comma-separated list of bbox coords (default [])
+        --concurrency int            Limit of concurrent requests to the WMS server (default 16)
+        --format      string         Tile format (default "image/png")
+        --height      int            Tile height (default 256)
+    -h, --help                       Help for get
+    -l, --layer       string         Layer name
+    -o, --output      string         Output directory for downloaded tiles
+        --params      stringToString Custom query string params (default [])
+    -s, --style       string         Layer style
+    -t, --timeout     int            HTTP request timeout (in milliseconds) (default 10000)
+    -u, --url         string         WMS server url
+        --version     string         WMS server version (default "1.3.0")
+        --width       int            Tile width (default 256)
+    -z, --zoom        ints           Comma-separated list of zooms
 ```
 
 ### Examples
@@ -77,7 +78,7 @@ root@df62f3f34fef:/tiles# tree
 ### Alternative - use as a library ([pkg.go.dev](https://pkg.go.dev/github.com/lmikolajczak/wms-tiles-downloader/wms))
 
 ```
-go get github.com/lmikolajczak/wms-tiles-downloader@v0.3.1
+go get github.com/lmikolajczak/wms-tiles-downloader@v0.3.2
 ```
 
 ### Disclaimer
