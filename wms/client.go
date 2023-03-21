@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
 )
 
 const (
@@ -139,7 +140,7 @@ func (c *Client) SaveTile(tile *Tile) error {
 		return err
 	}
 
-	err = ioutil.WriteFile(
+	err = os.WriteFile(
 		path.Join(outputPath, tile.Name()), tile.Body(), os.ModePerm,
 	)
 	if err != nil {
@@ -171,7 +172,7 @@ func (c *Client) request(ctx context.Context, method string, url string, timeout
 		return nil, fmt.Errorf("error making HTTP request (%v): %s", res.StatusCode, http.StatusText(res.StatusCode))
 	}
 
-	resBody, err := ioutil.ReadAll(res.Body)
+	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}

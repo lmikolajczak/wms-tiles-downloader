@@ -2,11 +2,12 @@ package wms
 
 import (
 	"fmt"
-	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
 	"net/url"
 	"path"
 	"path/filepath"
 	"strconv"
+
+	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
 )
 
 type Tile struct {

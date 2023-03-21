@@ -3,11 +3,13 @@ package wms_test
 import (
 	"context"
 	"errors"
-	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
-	"github.com/lmikolajczak/wms-tiles-downloader/wms"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
+	"github.com/lmikolajczak/wms-tiles-downloader/wms"
 )
 
 func TestClient_BaseURL(t *testing.T) {

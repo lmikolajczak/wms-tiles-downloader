@@ -2,6 +2,7 @@ package wms_test
 
 import (
 	"fmt"
+
 	"github.com/lmikolajczak/wms-tiles-downloader/wms"
 )
 

@@ -2,12 +2,14 @@ package wms_test
 
 import (
 	"fmt"
-	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
-	"github.com/lmikolajczak/wms-tiles-downloader/wms"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"path"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
+	"github.com/lmikolajczak/wms-tiles-downloader/wms"
 )
 
 func TestWithLayer(t *testing.T) {
