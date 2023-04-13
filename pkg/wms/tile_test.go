@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
-	"github.com/lmikolajczak/wms-tiles-downloader/wms"
+	"github.com/lmikolajczak/wms-tiles-downloader/pkg/mercantile"
+	"github.com/lmikolajczak/wms-tiles-downloader/pkg/wms"
 )
 
 func TestWithLayer(t *testing.T) {
