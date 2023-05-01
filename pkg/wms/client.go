@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
+	"github.com/lmikolajczak/wms-tiles-downloader/pkg/mercantile"
 )
 
 const (
