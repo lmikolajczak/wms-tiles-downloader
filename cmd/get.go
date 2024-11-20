@@ -7,8 +7,8 @@ import (
 	"github.com/schollz/progressbar/v3"
 	"github.com/spf13/cobra"
 
-	"github.com/lmikolajczak/wms-tiles-downloader/mercantile"
-	"github.com/lmikolajczak/wms-tiles-downloader/wms"
+	"github.com/lmikolajczak/wms-tiles-downloader/pkg/mercantile"
+	"github.com/lmikolajczak/wms-tiles-downloader/pkg/wms"
 )
 
 var getCmd = &cobra.Command{

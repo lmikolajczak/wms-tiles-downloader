@@ -3,7 +3,7 @@ package wms_test
 import (
 	"fmt"
 
-	"github.com/lmikolajczak/wms-tiles-downloader/wms"
+	"github.com/lmikolajczak/wms-tiles-downloader/pkg/wms"
 )
 
 func ExampleNewClient() {
